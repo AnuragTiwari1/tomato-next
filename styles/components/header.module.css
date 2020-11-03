@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo-container {
+  display: inline-block;
+}
+
+.logo {
+  width: 150px;
+}
+
+.nav {
+  list-style: none;
+  display: flex;
+}
+
+.nav-links {
+  text-transform: capitalize;
+  padding: 4px 16px;
+}
+
+.nav-links::hover {
+  background-color: grey;
+}

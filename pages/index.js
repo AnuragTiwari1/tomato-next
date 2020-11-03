@@ -1,65 +1,61 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import { Header } from "../components/Header";
+import styles from "../styles/Home.module.css";
+import { ImageCards } from "../components/ImageCards";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { Recipes } from "../services/recipies";
 
-export default function Home() {
+export async function getStaticProps() {
+  const recipeServices = new Recipes();
+  // fetch the content of the page from an headless CMS
+  const popularRecipes = recipeServices.getPopularRecipes();
+  return {
+    props: { popularRecipes },
+  };
+}
+
+export default function Home({ popularRecipes }) {
+  const [search, setSearch] = useState("");
+  const router = useRouter();
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
-        <title>Create Next App</title>
+        <title>Tomato | Restaurants and Recipes</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      <Header />
+      <section className={styles["hero-section"]}>
+        <h1>Tomato</h1>
+        <h3>A cheap clone of Zomato</h3>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            router.push(`/city/${search}`);
+          }}
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+          <input
+            type="text"
+            placeholder="see city highlights"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button type="submit">Go</button>
+        </form>
+      </section>
+
+      <section>
+        <h3 className="text-center">Explore</h3>
+        <ul className={styles["explore-cards__container"]}>
+          {popularRecipes.map((e) => {
+            return (
+              <li>
+                <ImageCards title={e.title}></ImageCards>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </div>
-  )
+  );
 }
